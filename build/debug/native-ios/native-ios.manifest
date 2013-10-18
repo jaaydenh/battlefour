@@ -1,0 +1,34 @@
+CACHE MANIFEST
+
+#3819c51ed5104a6cb6e29721ae94a665 version undefined
+
+CACHE:
+resources/icons/android36.png
+resources/icons/android48.png
+resources/icons/android72.png
+resources/icons/android96.png
+resources/icons/icon512.png
+resources/icons/ios114.png
+resources/icons/ios144.png
+resources/icons/ios57.png
+resources/icons/ios72.png
+resources/splash/landscape1536.png
+resources/splash/landscape768.png
+resources/splash/portrait1024.png
+resources/splash/portrait1136.png
+resources/splash/portrait2048.png
+resources/splash/portrait480.png
+resources/splash/portrait960.png
+resources/splash/README.txt
+spritesheets/resources-images-ui0.png
+spritesheets/resources-images0.png
+spritesheets/resources-images-ui1.png
+spritesheets/resources-images-backgrounds0.png
+spritesheets/resources-images-buttons0.png
+index.html
+native-ios.js
+
+FALLBACK:
+
+NETWORK:
+*
