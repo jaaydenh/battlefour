@@ -23,7 +23,7 @@ exports = Class(Emitter, function (supr) {
 		this.switchPlayer();
 		this.emit('MoveCompleted');
 
-		if (this.gameType = 'multiplayer') {
+		if (this.gameType == 'multiplayer') {
 			this.updateGame();	
 			this.setCurrentPlayerState();
 		}
@@ -153,7 +153,6 @@ exports = Class(Emitter, function (supr) {
 	this.setup = function() {
 		this.grid = null;
 		this.currentPlayer = gameConstants.PLAYER_1;
-		this.canMakeMove = false;
 		this.winner = 0;
 		this.turnNumber = 1;
 		this.initGameGrid();
@@ -242,7 +241,9 @@ exports = Class(Emitter, function (supr) {
 	this.createGame = function(gameType) {
 		this.gameType = gameType;
 
-		if (this.gameType = 'multiplayer') {
+		if (this.gameType == 'multiplayer') {
+
+			this.canMakeMove = false;
 
 			if (this.currentUser == null) {
 		 		this.currentUser = this.parseUtil.currentUser();
@@ -277,6 +278,8 @@ exports = Class(Emitter, function (supr) {
   				alert("Error: " + error.code + " " + error.message);
 			});
 			
+		} else if (this.gameType == 'passAndPlay') {
+			this.canMakeMove = true;
 		}
 	}
 

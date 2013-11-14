@@ -5,6 +5,7 @@ import src.constants.gameConstants as gameConstants;
 import src.models.GameModel as GameModel;
 import src.views.GameView as GameView;
 import src.views.TitleView as TitleView;
+import src.views.StartGameView as StartGameView;
 import ui.View as View;
 import ui.StackView as StackView;
 import src.lib.parse as Parse;
@@ -71,6 +72,10 @@ exports = Class(GC.Application, function () {
 			gameModel: this.gameModel
 		});
 
+		var startGameView = new StartGameView({
+			gameModel: this.gameModel
+		})
+
 		var gameView = new GameView({
 			//superview: this,
 			//parent: this,
@@ -92,13 +97,22 @@ exports = Class(GC.Application, function () {
 
 		homeView.on('StartGame', function () {
 			//gameModel.setGameType();
-			rootView.push(gameView);
+			rootView.push(startGameView);
 
 			//gamescreen.emit('app:start');
 		});
 
+		startGameView.on('CreateGame', function () {
+			rootView.push(gameView);
+		});
+
+		startGameView.on('Back', function () {
+			rootView.pop();
+		});
+
 		gameView.on('ExitGame', function () {
 			homeView.load();
+			rootView.pop();
 			rootView.pop();
 		});
 

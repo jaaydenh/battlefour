@@ -4,6 +4,10 @@ import src.constants.gameConstants as gameConstants;
 import ui.TextView as TextView;
 import ui.widget.ButtonView as ButtonView;
 import src.lib.parseUtil as ParseUtil;
+import GCDataSource;
+import ui.widget.List as ListView;
+import device;
+import ui.widget.Cell as CellView;
 
 exports = Class(View, function (supr) {
 
@@ -13,57 +17,50 @@ exports = Class(View, function (supr) {
 			x: 0,
 			y: 0,
 			width: gameConstants.GAME_WIDTH,
-			height: gameConstants.GAME_HEIGHT
+			height: gameConstants.GAME_HEIGHT,
+			backgroundColor: '#c69c6d'
 		});
+
+		this.gameModel = opts.gameModel;
 
 		supr(this, 'init', [opts]);
 
 		this.buildView();
 
-		//var currentUser = Parse.User.current();
-		this.parseUtil = new ParseUtil();
-		var currentUser = this.parseUtil.currentUser();
-		if (currentUser) {
-		    // do stuff with the user
-		} else {
-		    // show the signup or login page
-		    this.buildNotLoggedInView();
-		}
-	    
 	};
 
 	this.buildView = function() {
 
-		this.background = new ImageView({
+		/*this.background = new ImageView({
 			parent: this,
 			x: 0,
 			y: 0,
 			width: gameConstants.GAME_WIDTH,
 			height: gameConstants.GAME_HEIGHT,
-			image: "resources/images/backgrounds/title.png",
+			image: "resources/images/backgrounds/home.png",
 			opacity: 1
-		});
+		});*/
 
 		this.TitleText = new TextView({
 			parent: this,
-			x: gameConstants.GAME_WIDTH / 2 - 220,
-			y: 50,
-			width: 450,
+			x: gameConstants.GAME_WIDTH / 2 - 180,
+			y: 100,
+			width: 350,
 			height: 150,
-			text: "Battle Four",
+			text: "Start a Game",
 			fontFamily: "LuckiestGuyRegular",
-			size: 140,
+			size: 50,
 			strokeColor: 'white',
 			strokeWidth: 4.5,
 			canHandleEvents: false
 		});
 
-		this.startButton = new ButtonView({
+		this.RandomOpponentButton = new ButtonView({
 		    superview: this,
-		    width: 250,
+		    width: 350,
 		    height: 80,
-		    x: gameConstants.GAME_WIDTH / 2 - 120,
-		    y: 300,
+		    x: gameConstants.GAME_WIDTH / 2 - 175,
+		    y: 250,
 		    images: {
 		      up: "resources/images/buttons/brown_button_up.png",
 		      down: "resources/images/buttons/brown_button_down.png"
@@ -79,11 +76,12 @@ exports = Class(View, function (supr) {
 		    },
 		    on: {
 		      up: bind(this, function () {
-		 
-		      		this.emit('Start');
+
+		      		this.gameModel.createGame('multiplayer');
+		      		this.emit('CreateGame');
 				})		      
 		    },
-		    title: "Start",
+		    title: "Random Opponent",
 		    text: {
 		      color: "#ffffff",
 		      size: 36,
@@ -92,49 +90,11 @@ exports = Class(View, function (supr) {
 		    }
     	});
 
-	};
-
-	this.buildNotLoggedInView = function() {
-		this.signUpButton = new ButtonView({
+		this.PassAndPlayButton = new ButtonView({
 		    superview: this,
-		    width: 250,
+		    width: 350,
 		    height: 80,
-		    x: gameConstants.GAME_WIDTH / 2 - 120,
-		    y: 300,
-		    images: {
-		      up: "resources/images/buttons/brown_button_up.png",
-		      down: "resources/images/buttons/brown_button_down.png"
-		    },
-		    scaleMethod: "9slice",
-		    sourceSlices: {
-		      horizontal: {left: 80, center: 116, right: 80},
-		      vertical: {top: 10, middle: 80, bottom: 10}
-		    },
-		    destSlices: {
-		      horizontal: {left: 40, right: 40},
-		      vertical: {top: 4, bottom: 4}
-		    },
-		    on: {
-		      up: bind(this, function () {
-		 
-		      		this.parseUtil.signUp();
-		      		this.emit('Start');
-				})		      
-		    },
-		    title: "Sign Up",
-		    text: {
-		      color: "#ffffff",
-		      size: 36,
-		      autoFontSize: false,
-		      autoSize: false
-		    }
-    	});
-
-    	this.logInButton = new ButtonView({
-		    superview: this,
-		    width: 250,
-		    height: 80,
-		    x: gameConstants.GAME_WIDTH / 2 - 120,
+		    x: gameConstants.GAME_WIDTH / 2 - 175,
 		    y: 450,
 		    images: {
 		      up: "resources/images/buttons/brown_button_up.png",
@@ -151,13 +111,12 @@ exports = Class(View, function (supr) {
 		    },
 		    on: {
 		      up: bind(this, function () {
-		 
-		      		this.logInButton.style.visible = false;
-		      		this.signUpButton.style.visible = false;
-		      		this.buildLogInView();
+
+		      		this.gameModel.createGame('passAndPlay');
+		      		this.emit('CreateGame');
 				})		      
 		    },
-		    title: "Log in",
+		    title: "Pass and Play",
 		    text: {
 		      color: "#ffffff",
 		      size: 36,
@@ -166,15 +125,40 @@ exports = Class(View, function (supr) {
 		    }
     	});
 
-	}
-
-	this.buildLogInView = function() {
-
-
-
-	}
-
-	this.close = function() {
-
+    	this.BackButton = new ButtonView({
+		    superview: this,
+		    width: 130,
+		    height: 70,
+		    x: 10,
+		    y: 10,
+		    images: {
+		      up: "resources/images/buttons/brown_button_up.png",
+		      down: "resources/images/buttons/brown_button_down.png"
+		    },
+		    scaleMethod: "9slice",
+		    sourceSlices: {
+		      horizontal: {left: 80, center: 116, right: 80},
+		      vertical: {top: 10, middle: 80, bottom: 10}
+		    },
+		    destSlices: {
+		      horizontal: {left: 40, right: 40},
+		      vertical: {top: 4, bottom: 4}
+		    },
+		    on: {
+		      up: bind(this, function () {
+		      		this.emit('Back');
+				})		      
+		    },
+		    title: "Back",
+		    text: {
+		      color: "#ffffff",
+		      size: 36,
+		      autoFontSize: false,
+		      autoSize: false
+		    }
+    	});
 	};
+
+
+
 });

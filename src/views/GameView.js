@@ -362,7 +362,6 @@ exports = Class(View, function (supr) {
 		    },
 		    on: {
 		      up: bind(this, function () {
-
 		      	this.gameModel.resetGame();
 				this.resetGame();
 		      })
@@ -398,10 +397,11 @@ exports = Class(View, function (supr) {
 		    on: {
 		      up: bind(this, function () {
 				this.gameModel.resetGame();
+				this.resetGame();
 		      	this.emit('ExitGame');
 		      })
 		    },
-		    title: "Menu",
+		    title: "Back",
 		    text: {
 		      color: "#ffffff",
 		      size: 36,

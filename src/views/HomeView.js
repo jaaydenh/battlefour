@@ -123,9 +123,6 @@ exports = Class(View, function (supr) {
 		    },
 		    on: {
 		      up: bind(this, function () {
-
-		      		this.gameModel.createGame('multiplayer');
-
 		      		this.emit('StartGame');
 				})		      
 		    },
@@ -139,7 +136,6 @@ exports = Class(View, function (supr) {
     	});
 
 	};
-
 
 	this.close = function() {
 
