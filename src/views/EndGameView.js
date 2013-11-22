@@ -22,10 +22,10 @@ exports = Class(DialogBackgroundView, function (supr) {
 		this._dialogView = new BoxDialogView({
 			superview: this._dialogContainerView,
 			x: 20,
-			y: 20,
+			y: 500,
 			width: gameConstants.GAME_WIDTH - 40,
-			height: gameConstants.GAME_HEIGHT - 300,
-			title: 'Info',
+			height: gameConstants.GAME_HEIGHT - 700,
+			title: 'Game Over',
 			closeCB: opts.closeCB ? bind(this, 'hide', opts.closeCB) : false,
 			backCB: opts.backCB ? bind(this, 'hide', opts.backCB) : false
 		});
@@ -62,14 +62,14 @@ exports = Class(DialogBackgroundView, function (supr) {
 			horizontalAlign: 'left'
 		});
 
-		var newGameButton = new BoxBorderView({
+		var gamesListButton = new BoxBorderView({
 			superview: this._dialogView,
 			x: 120,
-			y: 400,
+			y: 200,
 			width: 300,
 			height: 100,
 			image: itemStyle.BACKGROUND,
-			text: "New Game",
+			text: "Games List",
 			fontFamily: itemStyle.FONT_FAMILY,
 			fontSize: itemStyle.FONT_SIZE,
 			textPadding: itemStyle.PADDING,
@@ -79,10 +79,11 @@ exports = Class(DialogBackgroundView, function (supr) {
 			horizontalAlign: itemStyle.ALIGN || 'center'
 		});
 
-		newGameButton.on('InputSelect', bind(this, function () {
+		gamesListButton.on('InputSelect', bind(this, function () {
 			menu.hide();
 			this.gameModel.resetGame();
 			this.gameView.resetGame();
+			this.gameView.emit('ExitGame');
 		}));
 	};
 

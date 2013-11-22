@@ -4,10 +4,7 @@ import src.constants.gameConstants as gameConstants;
 import ui.TextView as TextView;
 import ui.widget.ButtonView as ButtonView;
 import src.lib.parseUtil as ParseUtil;
-import GCDataSource;
-import ui.widget.List as ListView;
-import device;
-import ui.widget.Cell as CellView;
+
 
 exports = Class(View, function (supr) {
 
@@ -77,7 +74,7 @@ exports = Class(View, function (supr) {
 		    on: {
 		      up: bind(this, function () {
 
-		      		this.gameModel.createGame('multiplayer');
+		      		this.gameModel.createGame(gameConstants.MULTIPLAYER);
 		      		this.emit('CreateGame');
 				})		      
 		    },
@@ -112,7 +109,7 @@ exports = Class(View, function (supr) {
 		    on: {
 		      up: bind(this, function () {
 
-		      		this.gameModel.createGame('passAndPlay');
+		      		this.gameModel.createGame(gameConstants.PASSANDPLAY);
 		      		this.emit('CreateGame');
 				})		      
 		    },

@@ -52,6 +52,8 @@ exports = Class(GC.Application, function () {
 		  }
 		});*/
 
+
+
 		var rootView = new StackView({
 			superview: this,
 			x: 0,
@@ -62,15 +64,22 @@ exports = Class(GC.Application, function () {
 			backgroundColor: '#37B34A'
 		});
 
-		var titleView = new TitleView();
-
-		rootView.push(titleView);
-
 		this.gameModel = new GameModel();
 
 		var homeView = new HomeView({
 			gameModel: this.gameModel
 		});
+
+		var titleView = new TitleView();
+
+		titleView.on('Start', function () {
+			rootView.push(homeView);
+			homeView.load();
+		});
+
+		rootView.push(titleView);
+
+
 
 		var startGameView = new StartGameView({
 			gameModel: this.gameModel
@@ -90,16 +99,22 @@ exports = Class(GC.Application, function () {
 			on('DisableMove', bind(gameView, 'onDisableMoveCompleted')).
 			on('EndGame', bind(gameView, 'onEndGame'));
 
-		titleView.on('Start', function () {
-			rootView.push(homeView);
-			homeView.load();
-		});
+
+
+		//titleView.on('Signin', function () {
+		//	this.gameModel.getCurrentUser();
+		//});
 
 		homeView.on('StartGame', function () {
 			//gameModel.setGameType();
 			rootView.push(startGameView);
 
 			//gamescreen.emit('app:start');
+		});
+
+		homeView.on('LoadGame', function () {
+			rootView.push(startGameView);
+			rootView.push(gameView);
 		});
 
 		startGameView.on('CreateGame', function () {
@@ -117,6 +132,8 @@ exports = Class(GC.Application, function () {
 		});
 
 		this.initAudio();
+
+		titleView.checkForLoggedInUser();
 	};
 	
 	this.launchUI = function () {

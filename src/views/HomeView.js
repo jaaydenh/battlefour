@@ -5,17 +5,21 @@ import ui.TextView as TextView;
 import ui.widget.ButtonView as ButtonView;
 import src.lib.parseUtil as ParseUtil;
 import GCDataSource;
-import ui.widget.List as ListView;
+import ui.widget.ListView as ListView;
 import device;
-import ui.widget.Cell as CellView;
+import ui.widget.CellView as CellView;
+import ui.ScrollView as ScrollView;
 
-exports = Class(View, function (supr) {
+exports = Class(ScrollView, function (supr) {
 
 	this.init = function(opts) {
 
 		opts = merge(opts, {
 			x: 0,
 			y: 0,
+			scrollX: false,
+			useLayoutBounds: true,
+			bounceRadius: 150,
 			width: gameConstants.GAME_WIDTH,
 			height: gameConstants.GAME_HEIGHT,
 			backgroundColor: '#c69c6d'
@@ -38,6 +42,7 @@ exports = Class(View, function (supr) {
 		
 		if (this.currentUser) {
 		    this.parseUtil.getGames(this.currentUser);
+		    this.currentUserText.setText(this.currentUser.attributes.username);
 		} else {
 		    // show the signup or login page
 		    
@@ -87,6 +92,19 @@ exports = Class(View, function (supr) {
 			image: "resources/images/backgrounds/home.png",
 			opacity: 1
 		});*/
+		this.currentUserText = new TextView({
+			parent: this,
+			x: gameConstants.GAME_WIDTH / 2 - 220,
+			y: 750,
+			width: 450,
+			height: 150,
+			text: "Not signed in",
+			fontFamily: "LuckiestGuyRegular",
+			size: 40,
+			strokeColor: 'white',
+			strokeWidth: 2.5,
+			canHandleEvents: false
+		});
 
 		this.TitleText = new TextView({
 			parent: this,
@@ -135,6 +153,40 @@ exports = Class(View, function (supr) {
 		    }
     	});
 
+		this.logoutButton = new ButtonView({
+		    superview: this,
+		    width: 250,
+		    height: 80,
+		    x: gameConstants.GAME_WIDTH / 2 - 120,
+		    y: 720,
+		    images: {
+		      up: "resources/images/buttons/brown_button_up.png",
+		      down: "resources/images/buttons/brown_button_down.png"
+		    },
+		    scaleMethod: "9slice",
+		    sourceSlices: {
+		      horizontal: {left: 80, center: 116, right: 80},
+		      vertical: {top: 10, middle: 80, bottom: 10}
+		    },
+		    destSlices: {
+		      horizontal: {left: 40, right: 40},
+		      vertical: {top: 4, bottom: 4}
+		    },
+		    on: {
+		      up: bind(this, function () {
+		 
+		      		this.parseUtil.logout();
+		      		this.currentUserText.setText('Not signed in');
+				})		      
+		    },
+		    title: "Logout",
+		    text: {
+		      color: "#ffffff",
+		      size: 36,
+		      autoFontSize: false,
+		      autoSize: false
+		    }
+    	});
 	};
 
 	this.close = function() {
@@ -161,7 +213,7 @@ var GameCell = Class(CellView, function (supr) {
   this._onSelect = function () {
     this._title.updateOpts({color: "#FF0000"});
     this.parent.gameModel.loadGame(this._title.getText());
-    this.parent.emit('StartGame');
+    this.parent.emit('LoadGame');
   };
 
   this._onDeselect = function () {

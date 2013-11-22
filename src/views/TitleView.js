@@ -4,6 +4,8 @@ import src.constants.gameConstants as gameConstants;
 import ui.TextView as TextView;
 import ui.widget.ButtonView as ButtonView;
 import src.lib.parseUtil as ParseUtil;
+import device;
+import src.views.EmailView as EmailView;
 
 exports = Class(View, function (supr) {
 
@@ -20,17 +22,16 @@ exports = Class(View, function (supr) {
 
 		this.buildView();
 
-		//var currentUser = Parse.User.current();
 		this.parseUtil = new ParseUtil();
-		var currentUser = this.parseUtil.currentUser();
-		if (currentUser) {
-		    // do stuff with the user
-		} else {
-		    // show the signup or login page
-		    this.buildNotLoggedInView();
-		}
-	    
+		this.currentUser = this.parseUtil.currentUser();
 	};
+
+	this.checkForLoggedInUser = function() {
+
+		if (this.currentUser) {
+		    this.emit('Start');
+		} 
+	}
 
 	this.buildView = function() {
 
@@ -58,11 +59,11 @@ exports = Class(View, function (supr) {
 			canHandleEvents: false
 		});
 
-		this.startButton = new ButtonView({
+		this.loginWithFacebookButton = new ButtonView({
 		    superview: this,
-		    width: 250,
+		    width: 350,
 		    height: 80,
-		    x: gameConstants.GAME_WIDTH / 2 - 120,
+		    x: gameConstants.GAME_WIDTH / 2 - 170,
 		    y: 300,
 		    images: {
 		      up: "resources/images/buttons/brown_button_up.png",
@@ -80,10 +81,10 @@ exports = Class(View, function (supr) {
 		    on: {
 		      up: bind(this, function () {
 		 
-		      		this.emit('Start');
+		      		//this.emit('Start');
 				})		      
 		    },
-		    title: "Start",
+		    title: "Login with facebook",
 		    text: {
 		      color: "#ffffff",
 		      size: 36,
@@ -92,49 +93,11 @@ exports = Class(View, function (supr) {
 		    }
     	});
 
-	};
-
-	this.buildNotLoggedInView = function() {
-		this.signUpButton = new ButtonView({
+    	this.loginWithEmailButton = new ButtonView({
 		    superview: this,
-		    width: 250,
+		    width: 350,
 		    height: 80,
-		    x: gameConstants.GAME_WIDTH / 2 - 120,
-		    y: 300,
-		    images: {
-		      up: "resources/images/buttons/brown_button_up.png",
-		      down: "resources/images/buttons/brown_button_down.png"
-		    },
-		    scaleMethod: "9slice",
-		    sourceSlices: {
-		      horizontal: {left: 80, center: 116, right: 80},
-		      vertical: {top: 10, middle: 80, bottom: 10}
-		    },
-		    destSlices: {
-		      horizontal: {left: 40, right: 40},
-		      vertical: {top: 4, bottom: 4}
-		    },
-		    on: {
-		      up: bind(this, function () {
-		 
-		      		this.parseUtil.signUp();
-		      		this.emit('Start');
-				})		      
-		    },
-		    title: "Sign Up",
-		    text: {
-		      color: "#ffffff",
-		      size: 36,
-		      autoFontSize: false,
-		      autoSize: false
-		    }
-    	});
-
-    	this.logInButton = new ButtonView({
-		    superview: this,
-		    width: 250,
-		    height: 80,
-		    x: gameConstants.GAME_WIDTH / 2 - 120,
+		    x: gameConstants.GAME_WIDTH / 2 - 170,
 		    y: 450,
 		    images: {
 		      up: "resources/images/buttons/brown_button_up.png",
@@ -151,13 +114,15 @@ exports = Class(View, function (supr) {
 		    },
 		    on: {
 		      up: bind(this, function () {
-		 
-		      		this.logInButton.style.visible = false;
-		      		this.signUpButton.style.visible = false;
-		      		this.buildLogInView();
+
+		      		this.emailDialog.show();
+		      		//this.parseUtil.login('test2','password');
+		      		//this.currentUserText.setText('test2');
+
+		      		//this.emit('Signin');
 				})		      
 		    },
-		    title: "Log in",
+		    title: "Login with email",
 		    text: {
 		      color: "#ffffff",
 		      size: 36,
@@ -166,15 +131,12 @@ exports = Class(View, function (supr) {
 		    }
     	});
 
-	}
-
-	this.buildLogInView = function() {
-
-
-
-	}
-
-	this.close = function() {
+    	this.emailDialog = new EmailView({
+    		parent: this
+		});
+		this.addSubview(this.emailDialog);
 
 	};
+
+
 });

@@ -33,3 +33,7 @@ exports.ROW_SIZE = 60;
 exports.PLAYER_1 = 1;
 
 exports.PLAYER_2 = 2;
+
+exports.MULTIPLAYER = 'multiplayer';
+
+exports.PASSANDPLAY = 'passAndPlay';

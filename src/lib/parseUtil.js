@@ -11,26 +11,33 @@ exports = Class(Emitter, function (supr) {
 this.signUp = function(username, password) {
 
 	var user = new Parse.Parse.User();
-	user.set("username", "test1");
-	user.set("password", "password");
+	user.set("username", username);
+	user.set("password", password);
 	//user.set("email", "email@example.com");
 	 
-	user.signUp(null, {
+	user.signUp(this, {
 	  success: function(user) {
 	    // Hooray! Let them use the app now.
 	  },
 	  error: function(user, error) {
+		
 	    // Show the error message somewhere and let the user try again.
 	    alert("Error: " + error.code + " " + error.message);
+
+	    //this.login(user.attributes.username, 'battlefour');
 	  }
 	});
 };
+
+this.logout = function() {
+	Parse.Parse.User.logOut();
+}
 
 this.currentUser = function() {
 	return Parse.Parse.User.current();
 }
 
-this.getGames = function(user) {
+/*this.getGames = function(user) {
 	
 	var Game = Parse.Parse.Object.extend("Game");
 	var query = new Parse.Parse.Query(Game);
@@ -50,6 +57,36 @@ this.getGames = function(user) {
 	      games.push(game);	      
 	    }
 	    //games = "[" + games + "]";
+
+	    this.emit('GamesLoaded', games);
+	  }),
+	  error: function(error) {
+	    alert("Error: " + error.code + " " + error.message);
+	  }
+	});
+}*/
+
+this.getGames = function(user) {
+	
+	var Game = Parse.Parse.Object.extend("Game");
+	
+	var player1 = new Parse.Parse.Query("Game");
+	player1.equalTo("player1", user.attributes.username);
+
+	var player2 = new Parse.Parse.Query("Game");
+	player2.equalTo("player2", user.attributes.username);
+
+	var query = new Parse.Parse.Query.or(player1, player2);
+	var games = [];
+
+	query.find({
+	  success: bind(this, function(results) {
+	    for (var i = 0; i < results.length; i++) { 
+	      var game = results[i];
+
+	      var game = {objectId: game.id, currentPlayer: game.attributes.currentPlayer};
+	      games.push(game);	      
+	    }
 
 	    this.emit('GamesLoaded', games);
 	  }),
@@ -90,7 +127,7 @@ this.saveGame = function(game) {
 	});
 }
 
-this.logIn = function(username, password) {
+this.login = function(username, password) {
 	Parse.Parse.User.logIn(username, password, {
 	  success: function(user) {
 	    // Do stuff after successful login.
