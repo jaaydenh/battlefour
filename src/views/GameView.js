@@ -140,6 +140,50 @@ exports = Class(View, function (supr) {
 			visible: false
 		})
 
+		this.winHighlight1 = new ImageView({
+			superview: this,
+			image: "resources/images/tap_area.png",
+			x: 0,
+			y: 0,
+			width: gameConstants.GAME_PIECE_WIDTH,
+			height: gameConstants.GAME_PIECE_HEIGHT,
+			opacity: 0.5,
+			visible: false
+		})
+
+		this.winHighlight2 = new ImageView({
+			superview: this,
+			image: "resources/images/tap_area.png",
+			x: 0,
+			y: 0,
+			width: gameConstants.GAME_PIECE_WIDTH,
+			height: gameConstants.GAME_PIECE_HEIGHT,
+			opacity: 0.5,
+			visible: false
+		})
+
+		this.winHighlight3 = new ImageView({
+			superview: this,
+			image: "resources/images/tap_area.png",
+			x: 0,
+			y: 0,
+			width: gameConstants.GAME_PIECE_WIDTH,
+			height: gameConstants.GAME_PIECE_HEIGHT,
+			opacity: 0.5,
+			visible: false
+		})
+
+		this.winHighlight4 = new ImageView({
+			superview: this,
+			image: "resources/images/tap_area.png",
+			x: 0,
+			y: 0,
+			width: gameConstants.GAME_PIECE_WIDTH,
+			height: gameConstants.GAME_PIECE_HEIGHT,
+			opacity: 0.5,
+			visible: false
+		})
+
 		// Grid 
 		this._gridBackground = new ImageView({
 			superview: this,
@@ -321,10 +365,37 @@ exports = Class(View, function (supr) {
 		}
 	}
 
-	this.onEndGame = function(winner) {
+	this.onEndGame = function(opts) {
 		var playerText = "";
+		var piecePos = "";
 
-		if (winner == gameConstants.PLAYER_1) {
+		if (opts.winningPositions.length == 4) {
+			piecepos = opts.winningPositions[0].split(',');
+
+			this.winHighlight1.style.x = piecepos[1] * 60 + gameConstants.GRID_X_OFFSET;
+			this.winHighlight1.style.y = piecepos[0] * gameConstants.ROW_SIZE + gameConstants.GRID_X_OFFSET;
+			this.winHighlight1.style.visible = true;
+
+			piecepos = opts.winningPositions[1].split(',');
+
+			this.winHighlight2.style.x = piecepos[1] * 60 + gameConstants.GRID_X_OFFSET;
+			this.winHighlight2.style.y = piecepos[0] * gameConstants.ROW_SIZE + gameConstants.GRID_X_OFFSET;
+			this.winHighlight2.style.visible = true;
+
+			piecepos = opts.winningPositions[2].split(',');
+
+			this.winHighlight3.style.x = piecepos[1] * 60 + gameConstants.GRID_X_OFFSET;
+			this.winHighlight3.style.y = piecepos[0] * gameConstants.ROW_SIZE + gameConstants.GRID_X_OFFSET;
+			this.winHighlight3.style.visible = true;
+
+			piecepos = opts.winningPositions[3].split(',');
+
+			this.winHighlight4.style.x = piecepos[1] * 60 + gameConstants.GRID_X_OFFSET;
+			this.winHighlight4.style.y = piecepos[0] * gameConstants.ROW_SIZE + gameConstants.GRID_X_OFFSET;
+			this.winHighlight4.style.visible = true;
+		}
+
+		if (opts.winner == gameConstants.PLAYER_1) {
 			playerText = 'Player 1';
 		} else {
 			playerText = 'Player 2';
@@ -337,11 +408,16 @@ exports = Class(View, function (supr) {
 	this.resetGame = function() {
 		this.currentPieceModel = null;
 		this.gamePieceViewPool.releaseAllViews();	
+		this._highlight.style.visible = false;
+		this.winHighlight1.style.visible = false;
+		this.winHighlight2.style.visible = false;
+		this.winHighlight3.style.visible = false;
+		this.winHighlight4.style.visible = false;
 	}
 
 	this.initUI = function() {
 
-		this.resetButton = new ButtonView({
+		/*this.resetButton = new ButtonView({
 		    superview: this,
 		    width: 250,
 		    height: 80,
@@ -373,7 +449,7 @@ exports = Class(View, function (supr) {
 		      autoFontSize: false,
 		      autoSize: false
 		    }
-    	});
+    	});*/
 
     	this.menuButton = new ButtonView({
 		    superview: this,

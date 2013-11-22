@@ -11,6 +11,7 @@ exports = Class(Emitter, function (supr) {
 		
 		this.lastcol = null;
 		this.lastrow = null;
+		this.winningPositions = [];
 		this.parseUtil = new ParseUtil();
 		this.currentUser = this.parseUtil.currentUser();
 		this.setup();
@@ -18,12 +19,20 @@ exports = Class(Emitter, function (supr) {
 		//this.gridData = this.grid.slice(0);
 	};
 
+	this.getCurrentUser = function() {
+		this.currentUser = this.parseUtil.currentUser();
+	}
+
+	this.setGameType = function(gameType) {
+		this.gameType = gameType;
+	}
+
 	this.finishMove = function() {
 		this.checkForWinner();
 		this.switchPlayer();
 		this.emit('MoveCompleted');
 
-		if (this.gameType == 'multiplayer') {
+		if (this.gameType == gameConstants.MULTIPLAYER) {
 			this.updateGame();	
 			this.setCurrentPlayerState();
 		}
@@ -36,34 +45,22 @@ exports = Class(Emitter, function (supr) {
 	}
 
 	this.checkForWinner = function() {
+		this.winningPositions = [];
+
 		this.winner = this.checkRowForWinner();
 		if (this.winner != 0) {
-			this.emit('EndGame', this.winner);
+			this.emit('EndGame', {winner: this.winner, winningPositions: this.winningPositions});
 		} else {
 			this.winner = this.checkColumnForWinner();
 			if (this.winner != 0) {
-				this.emit('EndGame', this.winner);
+				this.emit('EndGame', {winner: this.winner, winningPositions: this.winningPositions});
 			} else { 
 				this.winner = this.checkDiagonalForWinner();
 				if (this.winner != 0) {
-					this.emit('EndGame', this.winner);
+					this.emit('EndGame', {winner: this.winner, winningPositions: this.winningPositions});
 				}
 			}
 		}
-	}
-
-	this.updateWinCounter = function(row, col, player, winCounter) {
-		if (this.grid[row][col] != '0') {
-			if (this.grid[row][col].player == player) {
-				winCounter++;
-			} else {
-				winCounter = 0;
-			}
-		} else {
-			winCounter = 0;
-		}
-
-		return winCounter;
 	}
 
 	this.resetGame = function() {
@@ -154,7 +151,7 @@ exports = Class(Emitter, function (supr) {
 		this.grid = null;
 		this.currentPlayer = gameConstants.PLAYER_1;
 		this.winner = 0;
-		this.turnNumber = 1;
+		this.turnNumber = 0;
 		this.initGameGrid();
 	}
 
@@ -168,13 +165,16 @@ exports = Class(Emitter, function (supr) {
 				this.emit('DisableMove');
 			}
 		} else if (this.currentUser.attributes.username == this.player2) {
-			if (this.currentPlayer = gameConstants.PLAYER_2) {
+			if (this.currentPlayer == gameConstants.PLAYER_2) {
 				this.canMakeMove = true;
 				this.emit('EnableMove');
 			} else {
 				this.canMakeMove = false;
 				this.emit('DisableMove');
 			}
+		} else {
+			this.canMakeMove = false;
+			this.emit('DisableMove');
 		}
 	}
 
@@ -184,12 +184,14 @@ exports = Class(Emitter, function (supr) {
 		this.game.set("gridData", gridData);
 		this.game.set("currentPlayer", this.currentPlayer);
 		this.game.set("winner", this.winner);
-		this.game.set("turnNumber", this.turnNumber);
+		this.game.set("turnNumber", this.turnNumber + 1);
 
 		this.parseUtil.saveGame(this.game);
 	}
 
 	this.loadGame = function(objectId) {
+		this.setGameType(gameConstants.MULTIPLAYER);
+
 		var Game = Parse.Parse.Object.extend("Game");
 		var User1 = Parse.Parse.Object.extend("User");
 		var User2 = Parse.Parse.Object.extend("User");
@@ -209,8 +211,11 @@ exports = Class(Emitter, function (supr) {
 		    this.turnNumber = game.get("turnNumber");
 
 		    this.emit('Update');
-
-		    this.setCurrentPlayerState();
+		    if (this.winner == 0) {
+		    	this.setCurrentPlayerState();
+			} else {
+				this.emit('DisableMove');
+			}
 		  }),
 		  error: function(game, error) {
 		    // The object was not retrieved successfully.
@@ -241,7 +246,7 @@ exports = Class(Emitter, function (supr) {
 	this.createGame = function(gameType) {
 		this.gameType = gameType;
 
-		if (this.gameType == 'multiplayer') {
+		if (this.gameType == gameConstants.MULTIPLAYER) {
 
 			this.canMakeMove = false;
 
@@ -260,7 +265,7 @@ exports = Class(Emitter, function (supr) {
 			this.game.set("player1", this.player1);
 			this.game.set("currentPlayer", this.currentPlayer);
 			this.game.set("winner", 0);
-			this.game.set("turnNumber", this.turnNumber);
+			this.game.set("turnNumber", 0);
 
 			var User = Parse.Parse.Object.extend("User");
 			var query = new Parse.Parse.Query(User);
@@ -278,7 +283,7 @@ exports = Class(Emitter, function (supr) {
   				alert("Error: " + error.code + " " + error.message);
 			});
 			
-		} else if (this.gameType == 'passAndPlay') {
+		} else if (this.gameType == gameConstants.PASSANDPLAY) {
 			this.canMakeMove = true;
 		}
 	}
@@ -348,12 +353,30 @@ exports = Class(Emitter, function (supr) {
 		}
 	}
 
+	this.updateWinCounter = function(row, col, player, winCounter) {
+		if (this.grid[row][col] != '0') {
+			if (this.grid[row][col].player == player) {
+				winCounter++;
+			} else {
+				winCounter = 0;
+			}
+		} else {
+			winCounter = 0;
+		}
+
+		return winCounter;
+	}
+
 	this.checkRowForWinner = function() {
 		var winCounterP1 = 0;
 		var winCounterP2 = 0;
 
 		for (var col = 0; col < gameConstants.GRID_COLUMNS; col++) {
 			winCounterP1 = this.updateWinCounter(this.lastrow, col, gameConstants.PLAYER_1, winCounterP1);
+
+			if (winCounterP1 > 0) {
+				this.winningPositions.push(this.lastrow + ',' + col);
+			} 
 
 			if (winCounterP1 >= 4) {
 				//Player 1 wins
@@ -362,9 +385,17 @@ exports = Class(Emitter, function (supr) {
 
 			winCounterP2 = this.updateWinCounter(this.lastrow, col, gameConstants.PLAYER_2, winCounterP2);
 
+			if (winCounterP2 > 0) {
+				this.winningPositions.push(this.lastrow + ',' + col);
+			} 
+
 			if (winCounterP2 >= 4) {
 				//Player 2 wins
 				return gameConstants.PLAYER_2;
+			}
+
+			if (winCounterP1 == 0 && winCounterP2 == 0) {
+				this.winningPositions = [];
 			}
 		}
 
@@ -379,6 +410,10 @@ exports = Class(Emitter, function (supr) {
 
 			winCounterP1 = this.updateWinCounter(row, this.lastcol, gameConstants.PLAYER_1, winCounterP1);
 
+			if (winCounterP1 > 0) {
+				this.winningPositions.push(row + ',' + this.lastcol);
+			}
+
 			if (winCounterP1 >= 4) {
 				//Player 1 wins
 				return gameConstants.PLAYER_1;
@@ -386,9 +421,17 @@ exports = Class(Emitter, function (supr) {
 
 			winCounterP2 = this.updateWinCounter(row, this.lastcol, gameConstants.PLAYER_2, winCounterP2);
 
+			if (winCounterP2 > 0) {
+				this.winningPositions.push(row + ',' + this.lastcol);
+			}
+
 			if (winCounterP2 >= 4) {
 				//Player 2 wins
 				return gameConstants.PLAYER_2;
+			}
+
+			if (winCounterP1 == 0 && winCounterP2 == 0) {
+				this.winningPositions = [];
 			}
 		}
 
@@ -413,6 +456,10 @@ exports = Class(Emitter, function (supr) {
 		for (var row = startingRow, col = startingCol; row < rows && col < cols;row++,col++) {
 			winCounterP1 = this.updateWinCounter(row, col, gameConstants.PLAYER_1, winCounterP1);
 
+			if (winCounterP1 > 0) {
+				this.winningPositions.push(row + ',' + col);
+			}
+
 			if (winCounterP1 >= 4) {
 				//Player 1 wins
 				return gameConstants.PLAYER_1;
@@ -420,9 +467,17 @@ exports = Class(Emitter, function (supr) {
 
 			winCounterP2 = this.updateWinCounter(row, col, gameConstants.PLAYER_2, winCounterP2);
 
+			if (winCounterP2 > 0) {
+				this.winningPositions.push(row + ',' + col);
+			}
+
 			if (winCounterP2 >= 4) {
 				//Player 2 wins
 				return gameConstants.PLAYER_2;
+			}
+
+			if (winCounterP1 == 0 && winCounterP2 == 0) {
+				this.winningPositions = [];
 			}
 		}
 
@@ -437,6 +492,10 @@ exports = Class(Emitter, function (supr) {
 		for (var row = startingRow, col = startingCol; row >= 0 && col < cols;row--,col++) {
 			winCounterP1 = this.updateWinCounter(row, col, gameConstants.PLAYER_1, winCounterP1);
 
+			if (winCounterP1 > 0) {
+				this.winningPositions.push(row + ',' + col);
+			}
+
 			if (winCounterP1 >= 4) {
 				//Player 1 wins
 				return gameConstants.PLAYER_1;
@@ -444,9 +503,17 @@ exports = Class(Emitter, function (supr) {
 
 			winCounterP2 = this.updateWinCounter(row, col, gameConstants.PLAYER_2, winCounterP2);
 
+			if (winCounterP2 > 0) {
+				this.winningPositions.push(row + ',' + col);
+			}
+
 			if (winCounterP2 >= 4) {
 				//Player 2 wins
 				return gameConstants.PLAYER_2;
+			}
+
+			if (winCounterP1 == 0 && winCounterP2 == 0) {
+				this.winningPositions = [];
 			}
 		}
 
