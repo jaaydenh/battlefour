@@ -193,8 +193,8 @@ exports = Class(Emitter, function (supr) {
 		this.setGameType(gameConstants.MULTIPLAYER);
 
 		var Game = Parse.Parse.Object.extend("Game");
-		var User1 = Parse.Parse.Object.extend("User");
-		var User2 = Parse.Parse.Object.extend("User");
+		//var User1 = Parse.Parse.Object.extend("User");
+		//var User2 = Parse.Parse.Object.extend("User");
 
 		var gameQuery = new Parse.Parse.Query(Game);
 		gameQuery.get(objectId, {
@@ -254,7 +254,44 @@ exports = Class(Emitter, function (supr) {
 		 		this.currentUser = this.parseUtil.currentUser();
 		 	}
 
-			var Game = Parse.Parse.Object.extend("Game");
+		 	var Game = Parse.Parse.Object.extend("Game");
+			var query = new Parse.Parse.Query(Game);
+			query.equalTo("player2", undefined);
+
+			query.first().then(bind(this,function(result) {
+				if (result) {
+					this.game = result;
+					this.game.set("player2", this.currentUser.attributes.username);
+					this.currentPlayer = this.game.attributes.currentPlayer;
+					this.player1 = this.game.attributes.player1;
+					this.player2 = this.game.attributes.player2;				
+		    		var gridData = this.game.get("gridData").split(',');
+		    		this.grid = this.loadGrid(gridData);
+		    		this.turnNumber = this.game.get("turnNumber");
+				} else {
+					this.game = new Game();
+					this.initGameGrid();
+					var gridData = this.getGridData();
+					this.game.set("gridData", gridData);
+
+					this.player1 = this.currentUser.attributes.username;
+					this.game.set("player1", this.player1);
+					this.game.set("currentPlayer", this.currentPlayer);
+					this.game.set("winner", 0);
+					this.game.set("turnNumber", 0);
+				}
+				this.parseUtil.saveGame(this.game);
+
+				this.emit('Update');
+				this.setCurrentPlayerState();	
+			}), function(error) {
+  				alert("Error: " + error.code + " " + error.message);
+			});
+
+
+
+
+			/*var Game = Parse.Parse.Object.extend("Game");
 			this.game = new Game();
 			this.initGameGrid();
 			var gridData = this.getGridData();
@@ -281,10 +318,11 @@ exports = Class(Emitter, function (supr) {
 				this.setCurrentPlayerState();	
 			}), function(error) {
   				alert("Error: " + error.code + " " + error.message);
-			});
+			});*/
 			
 		} else if (this.gameType == gameConstants.PASSANDPLAY) {
 			this.canMakeMove = true;
+			this.emit('EnableMove');
 		}
 	}
 
