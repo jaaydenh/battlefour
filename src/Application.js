@@ -31,14 +31,14 @@ exports = Class(GC.Application, function () {
 
 		//this.scaleUI();
 		//logger.log(Parse.Parse.VERSION);
-		Parse.Parse.initialize("uMAWb3YvKgDIE3vRQclaOowRPF8sFRWweAFUYsHw", "jRHEuXqwFva23xGwMSNeocneEtusyGXHxUlzmZEM");
+		Parse.Parse.initialize("J3gALSUBlUMfOSAGHyaEqXGVmyrlXOOsa8TiCh7u", "0gqBOcrMEu08EdlaHaszYexc9o4LXuua4UeY2jYC");
 
 
 		/*ajax.post({
 		  'url':'https://api.parse.com/1/events/AppOpened',
 		  'headers':{
-		    'X-Parse-Application-Id':'uMAWb3YvKgDIE3vRQclaOowRPF8sFRWweAFUYsHw',
-		    'X-Parse-REST-API-Key':'jRHEuXqwFva23xGwMSNeocneEtusyGXHxUlzmZEM',
+		    'X-Parse-Application-Id':'J3gALSUBlUMfOSAGHyaEqXGVmyrlXOOsa8TiCh7u',
+		    'X-Parse-REST-API-Key':'0gqBOcrMEu08EdlaHaszYexc9o4LXuua4UeY2jYC',
 		    'Content-Type':'application/json'
 		  },
 		  data:{
