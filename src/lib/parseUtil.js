@@ -13,15 +13,13 @@ this.signUp = function(username, password) {
 	var user = new Parse.Parse.User();
 	user.set("username", username);
 	user.set("password", password);
-	//user.set("email", "email@example.com");
+	user.set("email", username);
 	 
 	user.signUp(this, {
 	  success: function(user) {
-	    // Hooray! Let them use the app now.
+	    
 	  },
 	  error: function(user, error) {
-		
-	    // Show the error message somewhere and let the user try again.
 	    alert("Error: " + error.code + " " + error.message);
 
 	    //this.login(user.attributes.username, 'battlefour');
@@ -36,35 +34,6 @@ this.logout = function() {
 this.currentUser = function() {
 	return Parse.Parse.User.current();
 }
-
-/*this.getGames = function(user) {
-	
-	var Game = Parse.Parse.Object.extend("Game");
-	var query = new Parse.Parse.Query(Game);
-	var games = [];
-
-	query.find({
-	  success: bind(this, function(results) {
-	    for (var i = 0; i < results.length; i++) { 
-	      var game = results[i];
-	      //if (games != "") {
-		//	games += ",";
-	      //}
-	      
-	      //games += "{objectId: \"" + game.id + "\", currentPlayer: " + game.attributes.currentPlayer + "}";	
-	      //var game = {objectId: \"" + game.id + \"", currentPlayer: " + game.attributes.currentPlayer + };
-	      var game = {objectId: game.id, currentPlayer: game.attributes.currentPlayer};
-	      games.push(game);	      
-	    }
-	    //games = "[" + games + "]";
-
-	    this.emit('GamesLoaded', games);
-	  }),
-	  error: function(error) {
-	    alert("Error: " + error.code + " " + error.message);
-	  }
-	});
-}*/
 
 this.getGames = function(user) {
 	
@@ -84,7 +53,7 @@ this.getGames = function(user) {
 	    for (var i = 0; i < results.length; i++) { 
 	      var game = results[i];
 
-	      var game = {objectId: game.id, currentPlayer: game.attributes.currentPlayer};
+	      var game = {objectId: game.id, currentPlayer: game.attributes.currentPlayer, player1: game.attributes.player1, player2: game.attributes.player2, winner: game.attributes.winner};
 	      games.push(game);	      
 	    }
 

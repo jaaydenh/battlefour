@@ -15,7 +15,7 @@ exports = Class(View, function (supr) {
 			y: 0,
 			width: gameConstants.GAME_WIDTH,
 			height: gameConstants.GAME_HEIGHT,
-			backgroundColor: '#c69c6d'
+			backgroundColor: '#000000'
 		});
 
 		this.gameModel = opts.gameModel;
@@ -45,10 +45,9 @@ exports = Class(View, function (supr) {
 			width: 350,
 			height: 150,
 			text: "Start a Game",
-			fontFamily: "LuckiestGuyRegular",
+			fontFamily: gameConstants.MAIN_FONT,
+			color: 'white',
 			size: 50,
-			strokeColor: 'white',
-			strokeWidth: 4.5,
 			canHandleEvents: false
 		});
 
@@ -82,6 +81,7 @@ exports = Class(View, function (supr) {
 		    text: {
 		      color: "#ffffff",
 		      size: 36,
+		      fontFamily: gameConstants.MAIN_FONT,
 		      autoFontSize: false,
 		      autoSize: false
 		    }
@@ -117,6 +117,7 @@ exports = Class(View, function (supr) {
 		    text: {
 		      color: "#ffffff",
 		      size: 36,
+		      fontFamily: gameConstants.MAIN_FONT,
 		      autoFontSize: false,
 		      autoSize: false
 		    }
@@ -150,6 +151,7 @@ exports = Class(View, function (supr) {
 		    text: {
 		      color: "#ffffff",
 		      size: 36,
+		      fontFamily: gameConstants.MAIN_FONT,
 		      autoFontSize: false,
 		      autoSize: false
 		    }

@@ -52,10 +52,8 @@ exports = Class(View, function (supr) {
 			width: 450,
 			height: 150,
 			text: "Battle Four",
-			fontFamily: "LuckiestGuyRegular",
+			fontFamily: gameConstants.MAIN_FONT,
 			size: 140,
-			strokeColor: 'white',
-			strokeWidth: 4.5,
 			canHandleEvents: false
 		});
 
