@@ -37,3 +37,5 @@ exports.PLAYER_2 = 2;
 exports.MULTIPLAYER = 'multiplayer';
 
 exports.PASSANDPLAY = 'passAndPlay';
+
+exports.MAIN_FONT = 'OpenSans';

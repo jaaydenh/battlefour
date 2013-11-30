@@ -9,6 +9,7 @@ import ui.widget.ListView as ListView;
 import device;
 import ui.widget.CellView as CellView;
 import ui.ScrollView as ScrollView;
+import src.views.GameItemView as GameItemView;
 
 exports = Class(ScrollView, function (supr) {
 
@@ -22,7 +23,8 @@ exports = Class(ScrollView, function (supr) {
 			bounceRadius: 150,
 			width: gameConstants.GAME_WIDTH,
 			height: gameConstants.GAME_HEIGHT,
-			backgroundColor: '#c69c6d'
+			//backgroundColor: '#c69c6d'
+			backgroundColor: '#000000'
 		});
 
 		this.gameModel = opts.gameModel;
@@ -30,7 +32,6 @@ exports = Class(ScrollView, function (supr) {
 		supr(this, 'init', [opts]);
 
 		this.buildView();
-
 	};
 
 	this.load = function() {
@@ -42,7 +43,7 @@ exports = Class(ScrollView, function (supr) {
 		
 		if (this.currentUser) {
 		    this.parseUtil.getGames(this.currentUser);
-		    this.currentUserText.setText(this.currentUser.attributes.username);
+		    this.currentUserText.setText('Current User: ' + this.currentUser.attributes.username);
 		} else {
 		    // show the signup or login page
 		    
@@ -50,6 +51,49 @@ exports = Class(ScrollView, function (supr) {
 	}
 
 	this.onGamesLoaded = function(games) {
+
+		for (var i = 0; i<games.length;i++) {
+
+			var game = games[i];
+			var gameItemText = '';
+			var gameItemOpponent = '';
+
+			if (this.currentUser.attributes.username == game.player1) {
+				if (game.winner != 0) {
+					gameItemText = 'Game Over';
+				} else if (game.currentPlayer == gameConstants.PLAYER_1) {
+					gameItemText = 'Your Turn';
+				} else {
+					gameItemText = 'Waiting For Turn';
+				}
+				if (game.player2 != undefined) {
+					gameItemOpponent = game.player2;	
+				} else {
+					gameItemText = 'Waiting For Opponent';
+				}
+				
+			} else if (this.currentUser.attributes.username == game.player2) {
+				if (game.winner != 0) {
+					gameItemText = 'Game Over';
+				} else if (game.currentPlayer == gameConstants.PLAYER_2) {
+					gameItemText = 'Your Turn';
+				} else {
+					gameItemText = 'Waiting For Turn';
+				}
+				gameItemOpponent = game.player1;
+
+			} else {
+				gameItemText = 'Error loading game';
+			}
+
+			var gameItem = new GameItemView({parent: this, gameId: game.objectId, gameItemText: gameItemText, gameItemOpponent: gameItemOpponent});
+			gameItem.style.x = 40;
+			gameItem.style.y = i * 140 + 300;
+			this.addSubview(gameItem);
+		}
+	}
+
+	/*this.onGamesLoaded = function(games) {
 
 
 		this._gameData = new GCDataSource({
@@ -73,7 +117,7 @@ exports = Class(ScrollView, function (supr) {
 	      getCell: bind(this, "getCell")
 	    });
 	    this._gameList = gameList;
-	}
+	}*/
 
 	this.getCell = function () {
 		var gameList = this._gameList;
@@ -95,28 +139,26 @@ exports = Class(ScrollView, function (supr) {
 		this.currentUserText = new TextView({
 			parent: this,
 			x: gameConstants.GAME_WIDTH / 2 - 220,
-			y: 750,
+			y: 100,
 			width: 450,
 			height: 150,
-			text: "Not signed in",
-			fontFamily: "LuckiestGuyRegular",
-			size: 40,
-			strokeColor: 'white',
-			strokeWidth: 2.5,
+			text: "Current User: Not signed in",
+			fontFamily: gameConstants.MAIN_FONT,
+			size: 28,
+			color: 'white',
 			canHandleEvents: false
 		});
 
 		this.TitleText = new TextView({
 			parent: this,
-			x: gameConstants.GAME_WIDTH / 2 - 180,
+			x: gameConstants.GAME_WIDTH / 2 - 150,
 			y: 150,
 			width: 350,
 			height: 150,
 			text: "Current Games",
-			fontFamily: "LuckiestGuyRegular",
+			fontFamily: gameConstants.MAIN_FONT,
+			color: 'white',
 			size: 50,
-			strokeColor: 'white',
-			strokeWidth: 4.5,
 			canHandleEvents: false
 		});
 
@@ -148,17 +190,17 @@ exports = Class(ScrollView, function (supr) {
 		    text: {
 		      color: "#ffffff",
 		      size: 36,
-		      autoFontSize: false,
+		      autoFontSize: true,
 		      autoSize: false
 		    }
     	});
 
 		this.logoutButton = new ButtonView({
 		    superview: this,
-		    width: 250,
-		    height: 80,
-		    x: gameConstants.GAME_WIDTH / 2 - 120,
-		    y: 720,
+		    width: 120,
+		    height: 40,
+		    x: 5,
+		    y: 5,
 		    images: {
 		      up: "resources/images/buttons/brown_button_up.png",
 		      down: "resources/images/buttons/brown_button_down.png"
@@ -176,13 +218,13 @@ exports = Class(ScrollView, function (supr) {
 		      up: bind(this, function () {
 		 
 		      		this.parseUtil.logout();
-		      		this.currentUserText.setText('Not signed in');
+		      		this.currentUserText.setText('Current User: Not signed in');
 				})		      
 		    },
 		    title: "Logout",
 		    text: {
 		      color: "#ffffff",
-		      size: 36,
+		      size: 24,
 		      autoFontSize: false,
 		      autoSize: false
 		    }

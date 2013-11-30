@@ -257,6 +257,7 @@ exports = Class(Emitter, function (supr) {
 		 	var Game = Parse.Parse.Object.extend("Game");
 			var query = new Parse.Parse.Query(Game);
 			query.equalTo("player2", undefined);
+			query.notEqualTo("player1", this.currentUser.attributes.username);
 
 			query.first().then(bind(this,function(result) {
 				if (result) {
@@ -287,38 +288,6 @@ exports = Class(Emitter, function (supr) {
 			}), function(error) {
   				alert("Error: " + error.code + " " + error.message);
 			});
-
-
-
-
-			/*var Game = Parse.Parse.Object.extend("Game");
-			this.game = new Game();
-			this.initGameGrid();
-			var gridData = this.getGridData();
-
-			this.game.set("gridData", gridData);
-
-			this.player1 = this.currentUser.attributes.username;
-			this.game.set("player1", this.player1);
-			this.game.set("currentPlayer", this.currentPlayer);
-			this.game.set("winner", 0);
-			this.game.set("turnNumber", 0);
-
-			var User = Parse.Parse.Object.extend("User");
-			var query = new Parse.Parse.Query(User);
-			query.notEqualTo("username", this.currentUser.attributes.username);
-
-			query.first().then(bind(this,function(result) {
-				this.player2 = result.attributes.username;
-				this.game.set("player2", this.player2);
-
-				this.parseUtil.saveGame(this.game);
-
-				this.emit('Update');
-				this.setCurrentPlayerState();	
-			}), function(error) {
-  				alert("Error: " + error.code + " " + error.message);
-			});*/
 			
 		} else if (this.gameType == gameConstants.PASSANDPLAY) {
 			this.canMakeMove = true;

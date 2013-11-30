@@ -229,8 +229,6 @@ exports = Class(View, function (supr) {
 	}
 
 	this.createNewPiece = function(player) {
-		//var player = this.gameModel.getCurrentPlayer();
-
 		this.currentPieceModel = new GamePieceModel({
 			gameModel: this.gameModel,
 			player: player
@@ -251,30 +249,10 @@ exports = Class(View, function (supr) {
 	}
 
 	this.onPlacePiece = function(opts) {
-
 		var player = this.gameModel.getCurrentPlayer();
 
 		if (this.currentPieceModel == null) {
-
 			this.createNewPiece(player);
-
-			/*this.currentPieceModel = new GamePieceModel({
-				gameModel: this.gameModel,
-				player: player
-			})
-			
-			var currentPieceView = this.gamePieceViewPool.obtainView();
-			currentPieceView.removeAllListeners();
-			currentPieceView.setPlayer(player);
-
-			currentPieceView.on('InputSelect', bind(this.currentPieceModel, 'onInputRelease'));
-				//on('FinishMove', bind(this.gameModel, 'onFinishMove'));
-
-			this.currentPieceModel.on('Move', bind(currentPieceView, 'onMove')).
-				on('UpdatePosition', bind(currentPieceView, 'onUpdatePosition'));	
-
-			this.addSubview(currentPieceView);
-			currentPieceView.style.visible = true;*/
 		}
 		
 		var col = opts.col;
@@ -308,9 +286,6 @@ exports = Class(View, function (supr) {
 			this._highlight.style.visible = true;
 			
 		} else if (opts.tapArea == 'left') {
-			//this.currentPieceView.style.y = row * gameConstants.ROW_SIZE + gameConstants.GRID_Y_OFFSET;
-			//this.currentPieceView.style.x = 9;
-
 			x = 9;
 			y = row * gameConstants.ROW_SIZE + gameConstants.GRID_Y_OFFSET;
 
@@ -323,9 +298,6 @@ exports = Class(View, function (supr) {
 			this._highlight.style.visible = true;
 			
 		} else if (opts.tapArea == 'right') {
-			//this.currentPieceView.style.y = row * gameConstants.ROW_SIZE + gameConstants.GRID_Y_OFFSET;
-			//this.currentPieceView.style.x = 9 + gameConstants.GAME_GRID_WIDTH + gameConstants.GRID_X_OFFSET;
-
 			x = 9 + gameConstants.GAME_GRID_WIDTH + gameConstants.GRID_X_OFFSET;
 			y = row * gameConstants.ROW_SIZE + gameConstants.GRID_Y_OFFSET;
 
@@ -337,6 +309,7 @@ exports = Class(View, function (supr) {
 			this._highlight.style.height = gameConstants.GAME_PIECE_HEIGHT;
 			this._highlight.style.visible = true;
 		}
+
 		if (destRow == null) {
 			this.currentPieceModel.setColumn(destCol);
 			this.currentPieceModel.setRow(row);
@@ -417,41 +390,7 @@ exports = Class(View, function (supr) {
 
 	this.initUI = function() {
 
-		/*this.resetButton = new ButtonView({
-		    superview: this,
-		    width: 250,
-		    height: 80,
-		    x: gameConstants.GAME_WIDTH / 2 - 120,
-		    y: 750,
-		    images: {
-		      up: "resources/images/buttons/brown_button_up.png",
-		      down: "resources/images/buttons/brown_button_down.png"
-		    },
-		    scaleMethod: "9slice",
-		    sourceSlices: {
-		      horizontal: {left: 80, center: 116, right: 80},
-		      vertical: {top: 10, middle: 80, bottom: 10}
-		    },
-		    destSlices: {
-		      horizontal: {left: 40, right: 40},
-		      vertical: {top: 4, bottom: 4}
-		    },
-		    on: {
-		      up: bind(this, function () {
-		      	this.gameModel.resetGame();
-				this.resetGame();
-		      })
-		    },
-		    title: "New Game",
-		    text: {
-		      color: "#ffffff",
-		      size: 36,
-		      autoFontSize: false,
-		      autoSize: false
-		    }
-    	});*/
-
-    	this.menuButton = new ButtonView({
+    	this.backButton = new ButtonView({
 		    superview: this,
 		    width: 150,
 		    height: 80,
