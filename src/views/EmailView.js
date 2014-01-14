@@ -10,6 +10,7 @@ import menus.views.components.DialogBackgroundView as DialogBackgroundView;
 import src.constants.gameConstants as gameConstants;
 import ui.TextPromptView as TextPromptView;
 import src.lib.parseUtil as ParseUtil;
+import ui.TextEditView as TextEditView;
 
 exports = Class(DialogBackgroundView, function (supr) {
 	this.init = function (opts) {
@@ -39,7 +40,7 @@ exports = Class(DialogBackgroundView, function (supr) {
 		var textStyle = menuConstants.MENU_TEXT;
 		var menu = this;
 
-		this._textPromptView = new TextPromptView({
+		 /*this._textPromptView = new TextPromptView({
 			//These are inherited properties from View and TextView...
 			superview: this._dialogView,
 			x: gameConstants.GAME_WIDTH / 2 - 220,
@@ -60,12 +61,26 @@ exports = Class(DialogBackgroundView, function (supr) {
 			//Set the text shown in the TextPromptView, when the view is clicked, the text is changed and ok clicked
 			//then the text in the view will be updated
 			text: "email"
-		});
+		});*/
+
+		this._textEditView = new TextEditView({
+	      	superview: this._dialogView,
+		  	x: gameConstants.GAME_WIDTH / 2 - 220,
+			y: 200,
+	      	backgroundColor: "#404040",
+	      	width: 400,
+	      	height: 80,
+	      	color: "#FFFFFF",
+	      	hintColor: "pink",
+	      	hint: "email"
+	    });
 
 		//Subscribe to the change event, this event is published when the text is changed and ok is pressed.
-		this._textPromptView.subscribe("Change", this, "onChangeText");
+		//this._textPromptView.subscribe("Change", this, "onChangeText");
+		//this._textEditView.subscribe("Change", this, "onChangeText");
 		//Subscribe to the cancel event, this event is published when the cancel button in the dialog is pressed.
-		this._textPromptView.subscribe("Cancel", this, "onCancelText");
+		//this._textPromptView.subscribe("Cancel", this, "onCancelText");
+		//this._textEditView.subscribe("Cancel", this, "onCancelText");
 
 		var playButton = new BoxBorderView({
 			superview: this._dialogView,
@@ -102,7 +117,7 @@ exports = Class(DialogBackgroundView, function (supr) {
 		});
 
 		playButton.on('InputSelect', bind(this, function () {
-			this.parseUtil.signUp(this._textPromptView.getText(),'battlefour');
+			this.parseUtil.signUp(this._textEditView.getText(),'battlefour');
 
 		    this.parent.emit('Start');
 		}));
@@ -114,7 +129,7 @@ exports = Class(DialogBackgroundView, function (supr) {
 
 		//This function is called when the text is changed and ok is pressed
 	this.onChangeText = function (text) {
-		//this._textView.setText("Text input: " + text);
+		//this._textEditView.setText("Text input: " + text);
 	};
 
 	//This function is called when cancel is clicked in the dialog

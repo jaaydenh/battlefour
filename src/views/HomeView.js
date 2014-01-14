@@ -15,11 +15,18 @@ exports = Class(ScrollView, function (supr) {
 
 	this.init = function(opts) {
 
+		var scale = opts.scale || 1;
+
 		opts = merge(opts, {
 			x: 0,
 			y: 0,
 			scrollX: false,
-			useLayoutBounds: true,
+			useLayoutBounds: false,
+            scrollBounds: {
+            	minX: 0,
+            	minY: 0
+            	//maxY: 1200
+            },
 			bounceRadius: 150,
 			width: gameConstants.GAME_WIDTH,
 			height: gameConstants.GAME_HEIGHT,
@@ -91,6 +98,10 @@ exports = Class(ScrollView, function (supr) {
 			gameItem.style.y = i * 140 + 300;
 			this.addSubview(gameItem);
 		}
+
+		var maxY = games.length * 140 + 500;
+
+		this.setScrollBounds({minX: 0, minY: 0, maxY: maxY});
 	}
 
 	/*this.onGamesLoaded = function(games) {
